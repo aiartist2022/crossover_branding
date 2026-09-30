@@ -1,0 +1,11 @@
+# Keep repo/dev files out of the public site
+Options -Indexes
+
+<FilesMatch "(^\.|\.(md|py|pyc)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^src(/|$) - [F,L]
+</IfModule>

@@ -380,7 +380,8 @@ def contact():
           <div><span class="mono dim">Follow</span><a href="{CONTACT["instagram"]}" target="_blank" rel="noopener" class="c-link">@crossover_studios</a></div>
         </div>
       </div>
-      <form class="c-form" data-mailto="{CONTACT["emails"][0]}" novalidate>
+      <form class="c-form" action="contact.php" method="post" data-mailto="{CONTACT["emails"][0]}" novalidate>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0">
         <div class="c-form-head"><span>Contact Us</span>{mark("c-form-mark", grad_id="cg-form")}</div>
         <div class="c-row2">
           <label><span class="sr-only">Name</span><input name="name" placeholder="Name*" required></label>
@@ -405,9 +406,11 @@ def case(i, p):
     r = '../'
     nxt = PROJECTS[(i + 1) % len(PROJECTS)]
     n = len(p['imgs'])
+    slug, name = p['slug'], p['name']
     gallery = ''.join(
-        f'<figure class="g-item{" g-item--wide" if (k % 3 == 1 or n - 1 < 2) else ""}" data-reveal-img>'
-        f'{img(f"{r}images/work/{p['slug']}-{k + 1:02d}.webp", f"{p['name']} — image {k + 1}")}</figure>'
+        '<figure class="g-item%s" data-reveal-img>%s</figure>' % (
+            ' g-item--wide' if (k % 3 == 1 or n - 1 < 2) else '',
+            img(f'{r}images/work/{slug}-{k + 1:02d}.webp', f'{name} — image {k + 1}'))
         for k in range(1, n))
     body = f'''
   <section class="cs-hero">

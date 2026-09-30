@@ -373,10 +373,25 @@
         ok = ok && !bad;
       });
       if (!ok) { note.textContent = 'Please fill in the required fields.'; return; }
-      const d = Object.fromEntries(new FormData(form));
-      const bodyTxt = `Name: ${d.name}\nOrganization: ${d.organization}\nEmail: ${d.email}\nHeard about us: ${d.source || '-'}\nBudget: ${d.budget || '-'}\n\n${d.message}`;
-      location.href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent('Project enquiry — ' + d.organization)}&body=${encodeURIComponent(bodyTxt)}`;
-      note.textContent = 'Opening your email app…';
+      const fd = new FormData(form);
+      const d = Object.fromEntries(fd);
+      const btn = $('.c-submit', form);
+      btn.disabled = true;
+      note.textContent = 'Sending…';
+      // Posts to contact.php (Hostinger). If that is unavailable (e.g. local preview), fall back to the mail app.
+      fetch(form.getAttribute('action'), { method: 'POST', body: fd })
+        .then((res) => res.json().then((j) => ({ status: res.status, j })))
+        .then(({ status, j }) => {
+          note.textContent = j.message || 'Something went wrong.';
+          if (j.ok) form.reset();
+          else if (status >= 500) throw new Error('server');
+        })
+        .catch(() => {
+          const bodyTxt = `Name: ${d.name}\nOrganization: ${d.organization}\nEmail: ${d.email}\nHeard about us: ${d.source || '-'}\nBudget: ${d.budget || '-'}\n\n${d.message}`;
+          location.href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent('Project enquiry — ' + d.organization)}&body=${encodeURIComponent(bodyTxt)}`;
+          note.textContent = 'Opening your email app…';
+        })
+        .finally(() => { btn.disabled = false; });
     });
   }
 

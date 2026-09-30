@@ -59,13 +59,11 @@ Any static host works. All of these have a free tier and serve this folder as-is
 
 All internal links are relative, so the site also works from a sub-path (as on GitHub Pages).
 
-### The one thing that needs a service: the contact form
+### Contact form (Hostinger / any PHP host)
 
-Without Webflow there is no built-in form backend. Right now the form validates and then opens the
-visitor's email app with the enquiry pre-filled (to `purvak@crossoverproductions.ae`). To receive
-submissions directly instead, point the form at a form service — e.g. Netlify Forms (add
-`data-netlify="true"` if hosting on Netlify), Formspree, or Basin — and remove the `mailto` handler in
-`js/crossover.js` (`contact()`).
+The form posts to `contact.php`, which emails each enquiry to the address set in `TO`/`FROM` at the top of
+that file (`FROM` must be a mailbox on the hosting domain). It needs PHP hosting (Hostinger shared hosting
+has it); on static-only hosts or local preview it falls back to opening the visitor's email app.
 
 ## Libraries & fonts (all loaded from public CDNs)
 
